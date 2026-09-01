@@ -1,0 +1,29 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+spark = SparkSession.builder.appName("LogAnalysisDF").getOrCreate()
+
+# Load data
+df = spark.read.text("app_logs.txt")
+
+# Split into columns
+split_col = split(df["value"], " ")
+
+logs = df.select(
+    split_col.getItem(0).alias("date"),
+    split_col.getItem(1).alias("time"),
+    split_col.getItem(2).alias("level"),
+    split_col.getItem(3).alias("user"),
+    split_col.getItem(4).alias("action"),
+    split_col.getItem(5).alias("status_or_item")
+)
+
+logs.show(truncate=False)
+
+
+#Most Active User
+#Failed Login Attempts
+#Users with Both Success & Failure
+#Consecutive Failures
+#Users Who Never Made a Purchase
